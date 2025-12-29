@@ -41,7 +41,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-full flex-shrink-0">
+    <div className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-full shrink-0">
       <div className="p-6 flex flex-col gap-8 h-full">
         {/* Brand */}
         <div className="flex flex-col">
@@ -97,7 +97,9 @@ export function Sidebar() {
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors text-sm font-medium"
           >
-            <span className="material-symbols-outlined text-[20px]">logout</span>
+            <span className="material-symbols-outlined text-[20px]">
+              logout
+            </span>
             Logout
           </button>
         </div>

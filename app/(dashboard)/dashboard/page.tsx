@@ -98,7 +98,9 @@ export default function DashboardPage() {
           <div className="max-w-7xl mx-auto space-y-8">
             {error && (
               <div className="p-4 bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
+                <p className="text-red-700 dark:text-red-300 text-sm">
+                  {error}
+                </p>
               </div>
             )}
 
@@ -138,7 +140,8 @@ export default function DashboardPage() {
                         Total Expenses (This Month)
                       </p>
                       <h3 className="text-gray-900 dark:text-white text-3xl font-black tracking-tight">
-                        ${stats.totalExpenses.toLocaleString("en-US", {
+                        $
+                        {stats.totalExpenses.toLocaleString("en-US", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
@@ -158,14 +161,15 @@ export default function DashboardPage() {
                         Budget Remaining
                       </p>
                       <h3 className="text-gray-900 dark:text-white text-3xl font-black tracking-tight">
-                        ${stats.budgetRemaining.toLocaleString("en-US", {
+                        $
+                        {stats.budgetRemaining.toLocaleString("en-US", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
                       </h3>
                     </div>
                     <div className="flex items-center gap-2 z-10 mt-2">
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 max-w-[140px]">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 max-w-35">
                         <div
                           className="bg-purple-500 h-2 rounded-full"
                           style={{
@@ -230,7 +234,8 @@ export default function DashboardPage() {
                             ></div>
                           </div>
                           <p className="text-xs text-gray-600 dark:text-gray-400 text-right">
-                            ${item.amount.toLocaleString("en-US", {
+                            $
+                            {item.amount.toLocaleString("en-US", {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
                             })}
@@ -302,8 +307,8 @@ export default function DashboardPage() {
                                     expense.status === "paid"
                                       ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900"
                                       : expense.status === "pending"
-                                        ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-900"
-                                        : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900"
+                                      ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-900"
+                                      : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900"
                                   }`}
                                 >
                                   <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
@@ -312,7 +317,10 @@ export default function DashboardPage() {
                                 </span>
                               </td>
                               <td className="p-4 text-sm text-gray-900 dark:text-white font-bold text-right font-mono">
-                                ${typeof expense.amount === "string" ? parseFloat(expense.amount) : expense.amount}
+                                $
+                                {typeof expense.amount === "string"
+                                  ? parseFloat(expense.amount)
+                                  : expense.amount}
                               </td>
                             </tr>
                           ))}

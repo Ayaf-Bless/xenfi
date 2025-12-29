@@ -150,7 +150,7 @@ export default function ExpensesPage() {
             {/* Filters */}
             <div className="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col lg:flex-row gap-4">
               {/* Search */}
-              <div className="relative flex-1 min-w-[240px]">
+              <div className="relative flex-1 min-w-60">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-400 material-symbols-outlined">
                   search
                 </span>
@@ -229,8 +229,8 @@ export default function ExpensesPage() {
                                 expense.status === "paid"
                                   ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900"
                                   : expense.status === "pending"
-                                    ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-900"
-                                    : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900"
+                                  ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-900"
+                                  : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900"
                               }`}
                             >
                               <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
