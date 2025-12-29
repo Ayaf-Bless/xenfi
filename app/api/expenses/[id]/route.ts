@@ -5,20 +5,40 @@ import { prisma } from "@/lib/db";
 import { expenseSchema } from "@/lib/validations";
 import { Prisma } from "@prisma/client";
 
+export const dynamic = "force-dynamic";
+
+// Helper to check ownership
+async function verifyExpenseOwnership(expenseId: string, userId: string) {
+  const expense = await prisma.expense.findUnique({
+    where: { id: expenseId },
+    select: { userId: true },
+  });
+
+  if (!expense) {
+    return { error: "Expense not found", status: 404 };
+  }
+
+  if (expense.userId !== userId) {
+    return { error: "Unauthorized", status: 401 };
+  }
+
+  return null;
+}
+
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const expense = await prisma.expense.findUnique({
-      where: {
-        id: params.id,
-      },
+      where: { id },
       include: {
         category: true,
         user: {
@@ -31,8 +51,13 @@ export async function GET(
       },
     });
 
-    if (!expense || expense.userId !== session.user.id) {
+    if (!expense) {
       return NextResponse.json({ error: "Expense not found" }, { status: 404 });
+    }
+
+    // Check ownership
+    if (expense.userId !== session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     return NextResponse.json(expense);
@@ -47,37 +72,38 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
     const validatedData = expenseSchema.partial().parse(body);
 
-    const existingExpense = await prisma.expense.findUnique({
-      where: {
-        id: params.id,
-      },
-    });
-
-    if (!existingExpense || existingExpense.userId !== session.user.id) {
-      return NextResponse.json({ error: "Expense not found" }, { status: 404 });
+    // Check ownership first
+    const ownershipError = await verifyExpenseOwnership(id, session.user.id);
+    if (ownershipError) {
+      return NextResponse.json(
+        { error: ownershipError.error },
+        { status: ownershipError.status }
+      );
     }
 
     const updateData: any = { ...validatedData };
-    if (validatedData.amount) {
+    if (validatedData.amount !== undefined) {
       updateData.amount = new Prisma.Decimal(validatedData.amount);
     }
-    if (validatedData.date) {
+    if (validatedData.date !== undefined) {
       updateData.date = new Date(validatedData.date);
     }
 
     const expense = await prisma.expense.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
       include: {
         category: true,
@@ -87,12 +113,18 @@ export async function PATCH(
     return NextResponse.json(expense);
   } catch (error: any) {
     console.error("Error updating expense:", error);
+
     if (error.name === "ZodError") {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
         { status: 400 }
       );
     }
+
+    if (error.code === "P2025") {
+      return NextResponse.json({ error: "Expense not found" }, { status: 404 });
+    }
+
     return NextResponse.json(
       { error: "Failed to update expense" },
       { status: 500 }
@@ -102,31 +134,39 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const existingExpense = await prisma.expense.findUnique({
-      where: {
-        id: params.id,
-      },
-    });
-
-    if (!existingExpense || existingExpense.userId !== session.user.id) {
-      return NextResponse.json({ error: "Expense not found" }, { status: 404 });
+    // Check ownership first
+    const ownershipError = await verifyExpenseOwnership(id, session.user.id);
+    if (ownershipError) {
+      return NextResponse.json(
+        { error: ownershipError.error },
+        { status: ownershipError.status }
+      );
     }
 
     await prisma.expense.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
-    return NextResponse.json({ message: "Expense deleted successfully" });
-  } catch (error) {
+    return NextResponse.json({
+      message: "Expense deleted successfully",
+    });
+  } catch (error: any) {
     console.error("Error deleting expense:", error);
+
+    if (error.code === "P2025") {
+      return NextResponse.json({ error: "Expense not found" }, { status: 404 });
+    }
+
     return NextResponse.json(
       { error: "Failed to delete expense" },
       { status: 500 }
