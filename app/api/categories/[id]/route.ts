@@ -6,16 +6,17 @@ import { categorySchema } from "@/lib/validations";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const category = await prisma.category.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         _count: {
           select: { expenses: true },
@@ -42,9 +43,10 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -54,19 +56,36 @@ export async function PATCH(
     const validatedData = categorySchema.partial().parse(body);
 
     const category = await prisma.category.update({
-      where: { id: params.id },
+      where: { id },
       data: validatedData,
     });
 
     return NextResponse.json(category);
   } catch (error: any) {
     console.error("Error updating category:", error);
+
     if (error.name === "ZodError") {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
         { status: 400 }
       );
     }
+
+    // Handle Prisma errors
+    if (error.code === "P2025") {
+      return NextResponse.json(
+        { error: "Category not found" },
+        { status: 404 }
+      );
+    }
+
+    if (error.code === "P2002") {
+      return NextResponse.json(
+        { error: "Category with this name already exists" },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Failed to update category" },
       { status: 500 }
@@ -76,19 +95,34 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const expenseCount = await prisma.expense.count({
-      where: { categoryId: params.id },
+    // Check if category exists
+    const category = await prisma.category.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { expenses: true },
+        },
+      },
     });
 
-    if (expenseCount > 0) {
+    if (!category) {
+      return NextResponse.json(
+        { error: "Category not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if category has expenses
+    if (category._count.expenses > 0) {
       return NextResponse.json(
         { error: "Cannot delete category with existing expenses" },
         { status: 400 }
@@ -96,12 +130,20 @@ export async function DELETE(
     }
 
     await prisma.category.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: "Category deleted successfully" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting category:", error);
+
+    if (error.code === "P2025") {
+      return NextResponse.json(
+        { error: "Category not found" },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Failed to delete category" },
       { status: 500 }
