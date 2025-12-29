@@ -1,7 +1,9 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  log: ["error"],
+});
 
 async function main() {
   // Create categories
