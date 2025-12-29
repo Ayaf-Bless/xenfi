@@ -3,6 +3,14 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import {
+  LayoutDashboard,
+  Receipt,
+  BarChart3,
+  Settings,
+  LogOut,
+  Zap,
+} from "lucide-react";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -13,25 +21,25 @@ export function Sidebar() {
     {
       name: "Dashboard",
       href: "/dashboard",
-      icon: "dashboard",
+      icon: LayoutDashboard,
       current: pathname === "/dashboard",
     },
     {
       name: "Expenses",
       href: "/expenses",
-      icon: "receipt_long",
+      icon: Receipt,
       current: pathname.includes("/expenses"),
     },
     {
       name: "Reports",
       href: "/reports",
-      icon: "bar_chart",
+      icon: BarChart3,
       current: pathname.includes("/reports"),
     },
     {
       name: "Settings",
       href: "/settings",
-      icon: "settings",
+      icon: Settings,
       current: pathname.includes("/settings"),
     },
   ];
@@ -47,9 +55,7 @@ export function Sidebar() {
         <div className="flex flex-col">
           <h1 className="text-gray-900 dark:text-white text-xl font-bold leading-normal tracking-tight flex items-center gap-2">
             <span className="w-8 h-8 rounded bg-blue-500 flex items-center justify-center text-white">
-              <span className="material-symbols-outlined text-[20px]">
-                payments
-              </span>
+              <Zap size={20} />
             </span>
             XenFi
           </h1>
@@ -60,22 +66,25 @@ export function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex flex-col gap-2 flex-1">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                item.current
-                  ? "bg-blue-100 dark:bg-blue-500/20 text-gray-900 dark:text-white"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
-              }`}
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {item.icon}
-              </span>
-              <p className="text-sm font-medium leading-normal">{item.name}</p>
-            </Link>
-          ))}
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  item.current
+                    ? "bg-blue-100 dark:bg-blue-500/20 text-gray-900 dark:text-white"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                }`}
+              >
+                <Icon size={20} />
+                <p className="text-sm font-medium leading-normal">
+                  {item.name}
+                </p>
+              </Link>
+            );
+          })}
         </nav>
 
         {/* User Profile */}
@@ -97,9 +106,7 @@ export function Sidebar() {
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors text-sm font-medium"
           >
-            <span className="material-symbols-outlined text-[20px]">
-              logout
-            </span>
+            <LogOut size={20} />
             Logout
           </button>
         </div>

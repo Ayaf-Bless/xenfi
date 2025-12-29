@@ -6,6 +6,14 @@ import { useSession } from "next-auth/react";
 import { Sidebar } from "@/components/ui/sidebar";
 import { LoadingPage } from "@/components/ui/loading";
 import { Button } from "@/components/ui/button";
+import {
+  Bell,
+  HelpCircle,
+  Plus,
+  TrendingUp,
+  DollarSign,
+  AlertCircle,
+} from "lucide-react";
 
 interface DashboardStats {
   totalExpenses: number;
@@ -85,10 +93,10 @@ export default function DashboardPage() {
           </nav>
           <div className="flex items-center gap-3">
             <button className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-              <span className="material-symbols-outlined">notifications</span>
+              <Bell size={20} />
             </button>
             <button className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-              <span className="material-symbols-outlined">help</span>
+              <HelpCircle size={20} />
             </button>
           </div>
         </header>
@@ -116,9 +124,7 @@ export default function DashboardPage() {
               </div>
               <Link href="/expenses/new">
                 <Button>
-                  <span className="material-symbols-outlined text-[20px]">
-                    add
-                  </span>
+                  <Plus size={20} />
                   <span>Add Expense</span>
                 </Button>
               </Link>
@@ -131,9 +137,7 @@ export default function DashboardPage() {
                   {/* Total Expenses */}
                   <div className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
                     <div className="absolute right-0 top-0 p-5 opacity-10 group-hover:opacity-20 transition-opacity">
-                      <span className="material-symbols-outlined text-6xl text-blue-500">
-                        account_balance_wallet
-                      </span>
+                      <DollarSign size={60} className="text-blue-500" />
                     </div>
                     <div className="flex flex-col gap-1 z-10">
                       <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
@@ -152,9 +156,7 @@ export default function DashboardPage() {
                   {/* Budget Remaining */}
                   <div className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
                     <div className="absolute right-0 top-0 p-5 opacity-10 group-hover:opacity-20 transition-opacity">
-                      <span className="material-symbols-outlined text-6xl text-purple-500">
-                        pie_chart
-                      </span>
+                      <TrendingUp size={60} className="text-purple-500" />
                     </div>
                     <div className="flex flex-col gap-1 z-10">
                       <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
@@ -186,9 +188,7 @@ export default function DashboardPage() {
                   {/* Pending Approvals */}
                   <div className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
                     <div className="absolute right-0 top-0 p-5 opacity-10 group-hover:opacity-20 transition-opacity">
-                      <span className="material-symbols-outlined text-6xl text-orange-500">
-                        pending_actions
-                      </span>
+                      <AlertCircle size={60} className="text-orange-500" />
                     </div>
                     <div className="flex flex-col gap-1 z-10">
                       <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">

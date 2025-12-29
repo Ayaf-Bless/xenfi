@@ -4,6 +4,18 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Eye, EyeOff, Lock, Mail, BarChart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -53,16 +65,14 @@ export default function LoginPage() {
         ></div>
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-linear-to-t from-gray-900/90 via-gray-900/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/20 to-transparent"></div>
 
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-between w-full p-12 text-white">
           <div>
             <div className="flex items-center gap-2 mb-8">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                <span className="material-symbols-outlined text-white text-xl">
-                  bar_chart
-                </span>
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <BarChart size={20} className="text-white" />
               </div>
               <span className="text-xl font-bold tracking-tight">XenFi</span>
             </div>
@@ -88,10 +98,8 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex flex-col bg-white dark:bg-gray-900">
         {/* Mobile Header Logo (Only visible on small screens) */}
         <div className="lg:hidden p-6 flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-            <span className="material-symbols-outlined text-white text-xl">
-              bar_chart
-            </span>
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <BarChart size={20} className="text-white" />
           </div>
           <span className="text-xl font-bold tracking-tight dark:text-white">
             XenFi
@@ -99,7 +107,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-          <div className="w-full max-w-120 flex flex-col gap-6">
+          <div className="w-full max-w-[480px] flex flex-col gap-6">
             {/* Header Section */}
             <div className="flex flex-col gap-2 mb-2">
               <h1 className="text-gray-900 dark:text-white tracking-tight text-[32px] font-bold leading-tight">
@@ -119,118 +127,153 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {/* Email Field */}
-              <div className="flex flex-col gap-2">
-                <label
-                  className="text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal"
-                  htmlFor="email"
-                >
-                  Work Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="name@xenfi.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
-                  required
-                  className="flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 h-12 placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 text-base font-normal leading-normal transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-              </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Login</CardTitle>
+                <CardDescription>
+                  Enter your credentials to access your account
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Email Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Work Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="name@xenfi.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={loading}
+                      required
+                    />
+                  </div>
 
-              {/* Password Field */}
-              <div className="flex flex-col gap-2">
-                <label
-                  className="text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal"
-                  htmlFor="password"
-                >
-                  Password
-                </label>
-                <div className="relative flex w-full items-stretch rounded-lg">
-                  <input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                    required
-                    className="flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 h-12 placeholder:text-gray-500 dark:placeholder:text-gray-400 pl-4 pr-12 text-base font-normal leading-normal transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                  <button
+                  {/* Password Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
+                        required
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                        disabled={loading}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={20} />
+                        ) : (
+                          <Eye size={20} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Actions Row */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="remember-me"
+                        checked={rememberMe}
+                        onCheckedChange={(checked) =>
+                          setRememberMe(checked as boolean)
+                        }
+                        disabled={loading}
+                      />
+                      <label
+                        htmlFor="remember-me"
+                        className="text-sm text-gray-600 dark:text-gray-400 cursor-pointer"
+                      >
+                        Remember me
+                      </label>
+                    </div>
+                    <Link
+                      href="#"
+                      className="text-sm text-primary hover:underline"
+                    >
+                      Forgot Password?
+                    </Link>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Signing in..." : "Log In"}
+                  </Button>
+
+                  {/* Divider */}
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white dark:bg-gray-900 px-2 text-gray-500">
+                        Or continue with
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* SSO Button */}
+                  <Button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-0 top-0 h-full px-3 text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center justify-center disabled:opacity-50"
+                    variant="outline"
+                    className="w-full"
                     disabled={loading}
                   >
-                    <span className="material-symbols-outlined text-[20px]">
-                      {showPassword ? "visibility" : "visibility_off"}
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Actions Row */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    disabled={loading}
-                    className="rounded border-gray-300 text-blue-500 focus:ring-blue-500 w-4 h-4 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 disabled:opacity-50"
-                  />
-                  <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-300 transition-colors">
-                    Remember me
-                  </span>
-                </label>
-                <Link
-                  href="#"
-                  className="text-blue-500 text-sm font-medium hover:underline hover:text-blue-600 transition-colors"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-
-              {/* Primary Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white text-base font-bold leading-normal tracking-[0.015em] transition-colors shadow-sm mt-2 disabled:cursor-not-allowed"
-              >
-                <span className="truncate">
-                  {loading ? "Signing in..." : "Log In"}
-                </span>
-              </button>
-            </form>
+                    {/* Microsoft Icon SVG */}
+                    <svg
+                      className="w-5 h-5 mr-2"
+                      viewBox="0 0 23 23"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M0 0h23v23H0z" fill="#f3f3f3" />
+                      <path d="M1 1h10v10H1z" fill="#f35325" />
+                      <path d="M12 1h10v10H12z" fill="#81bc06" />
+                      <path d="M1 12h10v10H1z" fill="#05a6f0" />
+                      <path d="M12 12h10v10H12z" fill="#ffba08" />
+                    </svg>
+                    Single Sign-On (SSO)
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
 
             {/* Disclaimer */}
-            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded border border-gray-200 dark:border-gray-800">
-              <div className="flex gap-3">
-                <span className="material-symbols-outlined text-gray-400 text-[20px] mt-0.5">
-                  lock
-                </span>
-                <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                  This system is for authorized use only. Activity may be
-                  monitored and recorded. Unauthorized access is prohibited and
-                  subject to prosecution.
-                </p>
-              </div>
+            <Card className="border-dashed">
+              <CardContent className="pt-6">
+                <div className="flex gap-3">
+                  <Lock
+                    size={20}
+                    className="text-gray-400 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                    This system is for authorized use only. Activity may be
+                    monitored and recorded. Unauthorized access is prohibited
+                    and subject to prosecution.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Footer */}
+            <div className="text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Need help?{" "}
+                <Link href="#" className="text-primary hover:underline">
+                  Contact IT Support
+                </Link>
+              </p>
             </div>
           </div>
-        </div>
-
-        {/* Footer for Form Side */}
-        <div className="p-6 text-center lg:text-left lg:pl-12">
-          <p className="text-xs text-gray-400">
-            Need help?{" "}
-            <Link href="#" className="text-blue-500 hover:underline">
-              Contact IT Support
-            </Link>
-          </p>
         </div>
       </div>
     </div>

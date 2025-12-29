@@ -18,7 +18,6 @@ export async function GET(
     const expense = await prisma.expense.findUnique({
       where: {
         id: params.id,
-        userId: session.user.id,
       },
       include: {
         category: true,
@@ -32,7 +31,7 @@ export async function GET(
       },
     });
 
-    if (!expense) {
+    if (!expense || expense.userId !== session.user.id) {
       return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     }
 
@@ -62,11 +61,10 @@ export async function PATCH(
     const existingExpense = await prisma.expense.findUnique({
       where: {
         id: params.id,
-        userId: session.user.id,
       },
     });
 
-    if (!existingExpense) {
+    if (!existingExpense || existingExpense.userId !== session.user.id) {
       return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     }
 
@@ -115,11 +113,10 @@ export async function DELETE(
     const existingExpense = await prisma.expense.findUnique({
       where: {
         id: params.id,
-        userId: session.user.id,
       },
     });
 
-    if (!existingExpense) {
+    if (!existingExpense || existingExpense.userId !== session.user.id) {
       return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     }
 

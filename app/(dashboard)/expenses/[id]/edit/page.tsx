@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { FormInput } from "@/components/ui/form-input";
 import { FormSelect } from "@/components/ui/form-select";
 import { Button } from "@/components/ui/button";
 import { LoadingPage } from "@/components/ui/loading";
+import { Sidebar } from "@/components/ui/sidebar";
 import { formatDateForInput } from "@/lib/utils";
 import { PAYMENT_METHODS, EXPENSE_STATUSES } from "@/lib/constants";
-import Link from "next/link";
+import { ChevronRight, X, CheckCircle, Loader } from "lucide-react";
 
 interface Category {
   id: string;
@@ -168,221 +170,215 @@ export default function EditExpensePage() {
   }
 
   return (
-    <>
-      <header className="h-16 flex items-center justify-between px-6 border-b border-[#dbe0e6] dark:border-gray-800 bg-white dark:bg-[#111418] shrink-0">
-        <nav className="flex items-center gap-2 text-sm">
-          <Link
-            href="/dashboard"
-            className="text-[#617589] font-medium hover:text-primary transition-colors"
-          >
-            XenFi
-          </Link>
-          <span className="text-[#617589] material-symbols-outlined text-[16px]">
-            chevron_right
-          </span>
-          <Link
-            href="/expenses"
-            className="text-[#617589] font-medium hover:text-primary transition-colors"
-          >
-            Expenses
-          </Link>
-          <span className="text-[#617589] material-symbols-outlined text-[16px]">
-            chevron_right
-          </span>
-          <span className="text-[#111418] dark:text-white font-semibold">
-            Edit Expense
-          </span>
-        </nav>
-      </header>
+    <div className="flex h-screen w-full">
+      <Sidebar />
 
-      <div className="flex-1 overflow-auto bg-background-light dark:bg-background-dark p-6">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-[#111418] dark:text-white text-3xl font-black tracking-tight">
-                Edit Expense
-              </h2>
-              <p className="text-[#617589] mt-1">
-                Update the expense details below.
-              </p>
-            </div>
-            <Link href="/expenses">
-              <Button variant="outline">
-                <span className="material-symbols-outlined text-[18px]">
-                  close
-                </span>
-                Cancel
-              </Button>
+      <main className="flex-1 flex flex-col h-full overflow-hidden">
+        <header className="h-16 flex items-center justify-between px-6 border-b border-[#dbe0e6] dark:border-gray-800 bg-white dark:bg-[#111418] shrink-0">
+          <nav className="flex items-center gap-2 text-sm">
+            <Link
+              href="/dashboard"
+              className="text-[#617589] font-medium hover:text-primary transition-colors"
+            >
+              XenFi
             </Link>
-          </div>
+            <ChevronRight size={16} className="text-[#617589]" />
+            <Link
+              href="/expenses"
+              className="text-[#617589] font-medium hover:text-primary transition-colors"
+            >
+              Expenses
+            </Link>
+            <ChevronRight size={16} className="text-[#617589]" />
+            <span className="text-[#111418] dark:text-white font-semibold">
+              Edit Expense
+            </span>
+          </nav>
+        </header>
 
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-bold text-[#111418] dark:text-white">
-                Expense Information
-              </h3>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-2">
-                    <FormInput
-                      id="amount"
-                      name="amount"
-                      label="Amount *"
-                      type="number"
-                      step="0.01"
-                      value={formData.amount}
-                      onChange={handleChange}
-                      error={errors.amount}
-                      required
-                    />
-                  </div>
+        <div className="flex-1 overflow-auto bg-background-light dark:bg-background-dark p-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-[#111418] dark:text-white text-3xl font-black tracking-tight">
+                  Edit Expense
+                </h2>
+                <p className="text-[#617589] mt-1">
+                  Update the expense details below.
+                </p>
+              </div>
+              <Link href="/expenses">
+                <Button variant="outline">
+                  <X size={18} />
+                  Cancel
+                </Button>
+              </Link>
+            </div>
 
-                  <div className="md:col-span-2">
+            <Card>
+              <CardHeader>
+                <h3 className="text-lg font-bold text-[#111418] dark:text-white">
+                  Expense Information
+                </h3>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
+                      <FormInput
+                        id="amount"
+                        name="amount"
+                        label="Amount *"
+                        type="number"
+                        step="0.01"
+                        value={formData.amount}
+                        onChange={handleChange}
+                        error={errors.amount}
+                        required
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <FormInput
+                        id="description"
+                        name="description"
+                        label="Description *"
+                        type="text"
+                        value={formData.description}
+                        onChange={handleChange}
+                        error={errors.description}
+                        required
+                      />
+                    </div>
+
                     <FormInput
-                      id="description"
-                      name="description"
-                      label="Description *"
+                      id="merchantName"
+                      name="merchantName"
+                      label="Merchant Name"
                       type="text"
-                      value={formData.description}
+                      value={formData.merchantName}
                       onChange={handleChange}
-                      error={errors.description}
+                    />
+
+                    <FormInput
+                      id="date"
+                      name="date"
+                      label="Date *"
+                      type="date"
+                      value={formData.date}
+                      onChange={handleChange}
+                      error={errors.date}
                       required
                     />
-                  </div>
 
-                  <FormInput
-                    id="merchantName"
-                    name="merchantName"
-                    label="Merchant Name"
-                    type="text"
-                    value={formData.merchantName}
-                    onChange={handleChange}
-                  />
+                    <FormSelect
+                      id="categoryId"
+                      name="categoryId"
+                      label="Category *"
+                      value={formData.categoryId}
+                      onValueChange={(value) =>
+                        handleChange({
+                          target: {
+                            name: "categoryId",
+                            value,
+                          },
+                        } as any)
+                      }
+                      options={categories.map((cat) => ({
+                        value: cat.id,
+                        label: cat.name,
+                      }))}
+                      error={errors.categoryId}
+                      required
+                    />
 
-                  <FormInput
-                    id="date"
-                    name="date"
-                    label="Date *"
-                    type="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                    error={errors.date}
-                    required
-                  />
+                    <FormSelect
+                      id="paymentMethod"
+                      name="paymentMethod"
+                      label="Payment Method *"
+                      value={formData.paymentMethod}
+                      onValueChange={(value) =>
+                        handleChange({
+                          target: {
+                            name: "paymentMethod",
+                            value,
+                          },
+                        } as any)
+                      }
+                      options={PAYMENT_METHODS}
+                      required
+                    />
 
-                  <FormSelect
-                    id="categoryId"
-                    name="categoryId"
-                    label="Category *"
-                    value={formData.categoryId}
-                    onValueChange={(value) =>
-                      handleChange({
-                        target: {
-                          name: "categoryId",
-                          value,
-                        },
-                      } as any)
-                    }
-                    options={categories.map((cat) => ({
-                      value: cat.id,
-                      label: cat.name,
-                    }))}
-                    error={errors.categoryId}
-                    required
-                  />
+                    <FormSelect
+                      id="status"
+                      name="status"
+                      label="Status *"
+                      value={formData.status}
+                      onValueChange={(value) =>
+                        handleChange({
+                          target: {
+                            name: "status",
+                            value,
+                          },
+                        } as any)
+                      }
+                      options={EXPENSE_STATUSES}
+                      required
+                    />
 
-                  <FormSelect
-                    id="paymentMethod"
-                    name="paymentMethod"
-                    label="Payment Method *"
-                    value={formData.paymentMethod}
-                    onValueChange={(value) =>
-                      handleChange({
-                        target: {
-                          name: "paymentMethod",
-                          value,
-                        },
-                      } as any)
-                    }
-                    options={PAYMENT_METHODS}
-                    required
-                  />
-
-                  <FormSelect
-                    id="status"
-                    name="status"
-                    label="Status *"
-                    value={formData.status}
-                    onValueChange={(value) =>
-                      handleChange({
-                        target: {
-                          name: "status",
-                          value,
-                        },
-                      } as any)
-                    }
-                    options={EXPENSE_STATUSES}
-                    required
-                  />
-
-                  <FormInput
-                    id="attachmentUrl"
-                    name="attachmentUrl"
-                    label="Attachment URL"
-                    type="text"
-                    value={formData.attachmentUrl}
-                    onChange={handleChange}
-                  />
-
-                  <div className="md:col-span-2">
-                    <label
-                      className="text-[#111418] dark:text-gray-200 text-sm font-medium leading-normal mb-2 block"
-                      htmlFor="notes"
-                    >
-                      Notes
-                    </label>
-                    <textarea
-                      id="notes"
-                      name="notes"
-                      className="form-textarea w-full rounded-lg border-[#dbe0e6] dark:border-gray-700 bg-white dark:bg-[#1a2632] text-[#111418] dark:text-white focus:ring-primary focus:border-primary px-4 py-3 text-base"
-                      rows={4}
-                      value={formData.notes}
+                    <FormInput
+                      id="attachmentUrl"
+                      name="attachmentUrl"
+                      label="Attachment URL"
+                      type="text"
+                      value={formData.attachmentUrl}
                       onChange={handleChange}
                     />
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-end gap-3 pt-6 border-t border-[#dbe0e6] dark:border-gray-700">
-                  <Link href="/expenses">
-                    <Button type="button" variant="outline">
-                      Cancel
+                    <div className="md:col-span-2">
+                      <label
+                        className="text-[#111418] dark:text-gray-200 text-sm font-medium leading-normal mb-2 block"
+                        htmlFor="notes"
+                      >
+                        Notes
+                      </label>
+                      <textarea
+                        id="notes"
+                        name="notes"
+                        className="form-textarea w-full rounded-lg border-[#dbe0e6] dark:border-gray-700 bg-white dark:bg-[#1a2632] text-[#111418] dark:text-white focus:ring-primary focus:border-primary px-4 py-3 text-base"
+                        rows={4}
+                        value={formData.notes}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 pt-6 border-t border-[#dbe0e6] dark:border-gray-700">
+                    <Link href="/expenses">
+                      <Button type="button" variant="outline">
+                        Cancel
+                      </Button>
+                    </Link>
+                    <Button type="submit" disabled={saving}>
+                      {saving ? (
+                        <>
+                          <Loader size={20} className="animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle size={20} />
+                          Save Changes
+                        </>
+                      )}
                     </Button>
-                  </Link>
-                  <Button type="submit" disabled={saving}>
-                    {saving ? (
-                      <>
-                        <span className="animate-spin material-symbols-outlined">
-                          refresh
-                        </span>
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <span className="material-symbols-outlined text-[20px]">
-                          check
-                        </span>
-                        Save Changes
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }

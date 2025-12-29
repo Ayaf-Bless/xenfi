@@ -2,13 +2,29 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { FormInput } from "@/components/ui/form-input";
-import { FormSelect } from "@/components/ui/form-select";
-import { Button } from "@/components/ui/button";
-import { formatDateForInput } from "@/lib/utils";
-import { PAYMENT_METHODS, EXPENSE_STATUSES } from "@/lib/constants";
 import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Sidebar } from "@/components/ui/sidebar";
+import { PAYMENT_METHODS, EXPENSE_STATUSES } from "@/lib/constants";
+import { formatDateForInput } from "@/lib/utils";
+import { ChevronRight, X, Plus, Loader } from "lucide-react";
 
 interface Category {
   id: string;
@@ -117,10 +133,8 @@ export default function NewExpensePage() {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -130,264 +144,318 @@ export default function NewExpensePage() {
     }
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user makes a selection
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
   return (
-    <>
-      {/* Breadcrumbs Header */}
-      <header className="h-16 flex items-center justify-between px-6 border-b border-[#dbe0e6] dark:border-gray-800 bg-white dark:bg-[#111418] shrink-0">
-        <nav className="flex items-center gap-2 text-sm">
-          <Link
-            href="/dashboard"
-            className="text-[#617589] font-medium hover:text-primary transition-colors"
-          >
-            XenFi
-          </Link>
-          <span className="text-[#617589] material-symbols-outlined text-[16px]">
-            chevron_right
-          </span>
-          <Link
-            href="/expenses"
-            className="text-[#617589] font-medium hover:text-primary transition-colors"
-          >
-            Expenses
-          </Link>
-          <span className="text-[#617589] material-symbols-outlined text-[16px]">
-            chevron_right
-          </span>
-          <span className="text-[#111418] dark:text-white font-semibold">
-            New Expense
-          </span>
-        </nav>
-      </header>
+    <div className="flex h-screen w-full">
+      <Sidebar />
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto bg-background-light dark:bg-background-dark p-6">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-[#111418] dark:text-white text-3xl font-black tracking-tight">
-                Add New Expense
-              </h2>
-              <p className="text-[#617589] mt-1">
-                Enter the details of your expense below.
-              </p>
-            </div>
-            <Link href="/expenses">
-              <Button variant="outline">
-                <span className="material-symbols-outlined text-[18px]">
-                  close
-                </span>
-                <span>Cancel</span>
-              </Button>
+      <main className="flex-1 flex flex-col h-full overflow-hidden">
+        {/* Breadcrumbs Header */}
+        <header className="h-16 flex items-center justify-between px-6 border-b border-[#dbe0e6] dark:border-gray-800 bg-white dark:bg-[#111418] shrink-0">
+          <nav className="flex items-center gap-2 text-sm">
+            <Link
+              href="/dashboard"
+              className="text-[#617589] font-medium hover:text-primary transition-colors"
+            >
+              XenFi
             </Link>
-          </div>
+            <ChevronRight size={16} className="text-[#617589]" />
+            <Link
+              href="/expenses"
+              className="text-[#617589] font-medium hover:text-primary transition-colors"
+            >
+              Expenses
+            </Link>
+            <ChevronRight size={16} className="text-[#617589]" />
+            <span className="text-[#111418] dark:text-white font-semibold">
+              New Expense
+            </span>
+          </nav>
+        </header>
 
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-bold text-[#111418] dark:text-white">
-                Expense Information
-              </h3>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Amount */}
-                  <div className="md:col-span-2">
-                    <FormInput
-                      id="amount"
-                      name="amount"
-                      label="Amount *"
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      value={formData.amount}
-                      onChange={handleChange}
-                      error={errors.amount}
-                      required
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <div className="md:col-span-2">
-                    <FormInput
-                      id="description"
-                      name="description"
-                      label="Description *"
-                      type="text"
-                      placeholder="e.g., Client lunch at Bistro"
-                      value={formData.description}
-                      onChange={handleChange}
-                      error={errors.description}
-                      required
-                    />
-                  </div>
-
-                  {/* Merchant Name */}
-                  <FormInput
-                    id="merchantName"
-                    name="merchantName"
-                    label="Merchant Name"
-                    type="text"
-                    placeholder="e.g., The Bistro"
-                    value={formData.merchantName}
-                    onChange={handleChange}
-                  />
-
-                  {/* Date */}
-                  <FormInput
-                    id="date"
-                    name="date"
-                    label="Date *"
-                    type="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                    error={errors.date}
-                    required
-                  />
-
-                  {/* Category */}
-                  <FormSelect
-                    id="categoryId"
-                    name="categoryId"
-                    label="Category *"
-                    value={formData.categoryId}
-                    onValueChange={(value) =>
-                      handleChange({
-                        target: {
-                          name: "categoryId",
-                          value,
-                        },
-                      } as any)
-                    }
-                    options={categories.map((cat) => ({
-                      value: cat.id,
-                      label: cat.name,
-                    }))}
-                    error={errors.categoryId}
-                    required
-                  />
-
-                  {/* Payment Method */}
-                  <FormSelect
-                    id="paymentMethod"
-                    name="paymentMethod"
-                    label="Payment Method *"
-                    value={formData.paymentMethod}
-                    onValueChange={(value) =>
-                      handleChange({
-                        target: {
-                          name: "paymentMethod",
-                          value,
-                        },
-                      } as any)
-                    }
-                    options={PAYMENT_METHODS}
-                    error={errors.paymentMethod}
-                    required
-                  />
-
-                  {/* Status */}
-                  <FormSelect
-                    id="status"
-                    name="status"
-                    label="Status *"
-                    value={formData.status}
-                    onValueChange={(value) =>
-                      handleChange({
-                        target: {
-                          name: "status",
-                          value,
-                        },
-                      } as any)
-                    }
-                    options={EXPENSE_STATUSES}
-                    required
-                  />
-
-                  {/* Attachment URL */}
-                  <FormInput
-                    id="attachmentUrl"
-                    name="attachmentUrl"
-                    label="Attachment URL"
-                    type="text"
-                    placeholder="e.g., receipt_oct24.pdf"
-                    value={formData.attachmentUrl}
-                    onChange={handleChange}
-                  />
-
-                  {/* Notes */}
-                  <div className="md:col-span-2">
-                    <label
-                      className="text-[#111418] dark:text-gray-200 text-sm font-medium leading-normal mb-2 block"
-                      htmlFor="notes"
-                    >
-                      Notes
-                    </label>
-                    <textarea
-                      id="notes"
-                      name="notes"
-                      className="form-textarea w-full rounded-lg border-[#dbe0e6] dark:border-gray-700 bg-white dark:bg-[#1a2632] text-[#111418] dark:text-white focus:ring-primary focus:border-primary px-4 py-3 text-base placeholder:text-[#617589] dark:placeholder:text-gray-500"
-                      rows={4}
-                      placeholder="Add any additional notes or details..."
-                      value={formData.notes}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                {/* Form Actions */}
-                <div className="flex items-center justify-end gap-3 pt-6 border-t border-[#dbe0e6] dark:border-gray-700">
-                  <Link href="/expenses">
-                    <Button type="button" variant="outline">
-                      Cancel
-                    </Button>
-                  </Link>
-                  <Button type="submit" disabled={loading}>
-                    {loading ? (
-                      <>
-                        <span className="animate-spin material-symbols-outlined">
-                          refresh
-                        </span>
-                        <span>Creating...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="material-symbols-outlined text-[20px]">
-                          check
-                        </span>
-                        <span>Create Expense</span>
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Help Card */}
-          <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-900">
-            <CardContent className="p-4">
-              <div className="flex gap-3">
-                <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[20px] mt-0.5">
-                  info
-                </span>
-                <div>
-                  <h4 className="text-sm font-bold text-blue-900 dark:text-blue-100 mb-1">
-                    Expense Submission Tips
-                  </h4>
-                  <ul className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
-                    <li>• Include detailed descriptions for faster approval</li>
-                    <li>• Attach receipts when available</li>
-                    <li>
-                      • Categorize expenses accurately for better reporting
-                    </li>
-                    <li>• Submit expenses within 30 days for compliance</li>
-                  </ul>
-                </div>
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto bg-background-light dark:bg-background-dark p-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-[#111418] dark:text-white text-3xl font-black tracking-tight">
+                  Add New Expense
+                </h2>
+                <p className="text-[#617589] mt-1">
+                  Enter the details of your expense below.
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <Link href="/expenses">
+                <Button variant="outline">
+                  <X size={18} className="mr-2" />
+                  Cancel
+                </Button>
+              </Link>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Expense Information</CardTitle>
+                <CardDescription>
+                  Fill out all required fields marked with *
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Amount */}
+                    <div className="md:col-span-2">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="amount"
+                          className={errors.amount ? "text-destructive" : ""}
+                        >
+                          Amount *
+                        </Label>
+                        <Input
+                          id="amount"
+                          name="amount"
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          value={formData.amount}
+                          onChange={handleInputChange}
+                          className={errors.amount ? "border-destructive" : ""}
+                          required
+                        />
+                        {errors.amount && (
+                          <p className="text-sm text-destructive">
+                            {errors.amount}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <div className="md:col-span-2">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="description"
+                          className={
+                            errors.description ? "text-destructive" : ""
+                          }
+                        >
+                          Description *
+                        </Label>
+                        <Input
+                          id="description"
+                          name="description"
+                          type="text"
+                          placeholder="e.g., Client lunch at Bistro"
+                          value={formData.description}
+                          onChange={handleInputChange}
+                          className={
+                            errors.description ? "border-destructive" : ""
+                          }
+                          required
+                        />
+                        {errors.description && (
+                          <p className="text-sm text-destructive">
+                            {errors.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Merchant Name */}
+                    <div className="space-y-2">
+                      <Label htmlFor="merchantName">Merchant Name</Label>
+                      <Input
+                        id="merchantName"
+                        name="merchantName"
+                        type="text"
+                        placeholder="e.g., The Bistro"
+                        value={formData.merchantName}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+
+                    {/* Date */}
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="date"
+                        className={errors.date ? "text-destructive" : ""}
+                      >
+                        Date *
+                      </Label>
+                      <Input
+                        id="date"
+                        name="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={handleInputChange}
+                        className={errors.date ? "border-destructive" : ""}
+                        required
+                      />
+                      {errors.date && (
+                        <p className="text-sm text-destructive">
+                          {errors.date}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Category */}
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="categoryId"
+                        className={errors.categoryId ? "text-destructive" : ""}
+                      >
+                        Category *
+                      </Label>
+                      <Select
+                        value={formData.categoryId}
+                        onValueChange={(value) =>
+                          handleSelectChange("categoryId", value)
+                        }
+                      >
+                        <SelectTrigger
+                          className={
+                            errors.categoryId ? "border-destructive" : ""
+                          }
+                        >
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.categoryId && (
+                        <p className="text-sm text-destructive">
+                          {errors.categoryId}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Payment Method */}
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="paymentMethod"
+                        className={
+                          errors.paymentMethod ? "text-destructive" : ""
+                        }
+                      >
+                        Payment Method *
+                      </Label>
+                      <Select
+                        value={formData.paymentMethod}
+                        onValueChange={(value) =>
+                          handleSelectChange("paymentMethod", value)
+                        }
+                      >
+                        <SelectTrigger
+                          className={
+                            errors.paymentMethod ? "border-destructive" : ""
+                          }
+                        >
+                          <SelectValue placeholder="Select payment method" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PAYMENT_METHODS.map((method) => (
+                            <SelectItem key={method.value} value={method.value}>
+                              {method.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.paymentMethod && (
+                        <p className="text-sm text-destructive">
+                          {errors.paymentMethod}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Status */}
+                    <div className="space-y-2">
+                      <Label htmlFor="status">Status *</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) =>
+                          handleSelectChange("status", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {EXPENSE_STATUSES.map((status) => (
+                            <SelectItem key={status.value} value={status.value}>
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Attachment URL */}
+                    <div className="space-y-2">
+                      <Label htmlFor="attachmentUrl">Attachment URL</Label>
+                      <Input
+                        id="attachmentUrl"
+                        name="attachmentUrl"
+                        type="text"
+                        placeholder="e.g., receipt_oct24.pdf"
+                        value={formData.attachmentUrl}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+
+                    {/* Notes */}
+                    <div className="md:col-span-2 space-y-2">
+                      <Label htmlFor="notes">Notes</Label>
+                      <Textarea
+                        id="notes"
+                        name="notes"
+                        className="min-h-[120px]"
+                        placeholder="Add any additional notes or details..."
+                        value={formData.notes}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Form Actions */}
+                  <div className="flex items-center justify-end gap-3 pt-6 border-t">
+                    <Link href="/expenses">
+                      <Button type="button" variant="outline">
+                        Cancel
+                      </Button>
+                    </Link>
+                    <Button type="submit" disabled={loading}>
+                      {loading ? (
+                        <>
+                          <Loader size={20} className="mr-2 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Plus size={20} className="mr-2" />
+                          Add Expense
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }

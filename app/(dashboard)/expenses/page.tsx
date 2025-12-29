@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/ui/sidebar";
 import { LoadingPage } from "@/components/ui/loading";
 import { Button } from "@/components/ui/button";
+import { ChevronRight, Search, Pencil, Trash2, Plus } from "lucide-react";
 
 interface Expense {
   id: string;
@@ -115,9 +116,10 @@ export default function ExpensesPage() {
             >
               XenFi
             </Link>
-            <span className="text-gray-600 dark:text-gray-400 material-symbols-outlined text-[16px]">
-              chevron_right
-            </span>
+            <ChevronRight
+              size={16}
+              className="text-gray-600 dark:text-gray-400"
+            />
             <span className="text-gray-900 dark:text-white font-semibold">
               Expenses
             </span>
@@ -139,9 +141,7 @@ export default function ExpensesPage() {
               </div>
               <Link href="/expenses/new">
                 <Button>
-                  <span className="material-symbols-outlined text-[20px]">
-                    add
-                  </span>
+                  <Plus size={20} />
                   <span>Add Expense</span>
                 </Button>
               </Link>
@@ -151,9 +151,10 @@ export default function ExpensesPage() {
             <div className="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col lg:flex-row gap-4">
               {/* Search */}
               <div className="relative flex-1 min-w-60">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-400 material-symbols-outlined">
-                  search
-                </span>
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-400"
+                />
                 <input
                   type="text"
                   placeholder="Search by description, merchant..."
@@ -252,18 +253,14 @@ export default function ExpensesPage() {
                             <div className="flex items-center gap-1 justify-end">
                               <Link href={`/expenses/${expense.id}/edit`}>
                                 <button className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">
-                                  <span className="material-symbols-outlined text-[20px]">
-                                    edit
-                                  </span>
+                                  <Pencil size={18} />
                                 </button>
                               </Link>
                               <button
                                 onClick={() => handleDelete(expense.id)}
                                 className="p-1 rounded-full hover:bg-red-200 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors"
                               >
-                                <span className="material-symbols-outlined text-[20px]">
-                                  delete
-                                </span>
+                                <Trash2 size={18} />
                               </button>
                             </div>
                           </td>
