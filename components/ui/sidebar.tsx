@@ -30,18 +30,6 @@ export function Sidebar() {
       icon: Receipt,
       current: pathname.includes("/expenses"),
     },
-    {
-      name: "Reports",
-      href: "/reports",
-      icon: BarChart3,
-      current: pathname.includes("/reports"),
-    },
-    {
-      name: "Settings",
-      href: "/settings",
-      icon: Settings,
-      current: pathname.includes("/settings"),
-    },
   ];
 
   const handleLogout = async () => {
