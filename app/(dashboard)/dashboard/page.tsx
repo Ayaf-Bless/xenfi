@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Sidebar } from "@/components/ui/sidebar";
-import { LoadingPage } from "@/components/ui/loading";
+import { LoadingContent } from "@/components/ui/loading";
 import { Button } from "@/components/ui/button";
 import {
   Bell,
@@ -72,7 +72,14 @@ export default function DashboardPage() {
   };
 
   if (status === "loading" || loading) {
-    return <LoadingPage />;
+    return (
+      <div className="flex h-screen w-full">
+        <Sidebar />
+        <main className="flex-1 flex flex-col h-full overflow-hidden">
+          <LoadingContent />
+        </main>
+      </div>
+    );
   }
 
   if (status === "unauthenticated") {

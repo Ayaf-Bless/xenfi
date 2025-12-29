@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { FormInput } from "@/components/ui/form-input";
 import { FormSelect } from "@/components/ui/form-select";
 import { Button } from "@/components/ui/button";
-import { LoadingPage } from "@/components/ui/loading";
+import { LoadingContent } from "@/components/ui/loading";
 import { Sidebar } from "@/components/ui/sidebar";
 import { formatDateForInput } from "@/lib/utils";
 import { PAYMENT_METHODS, EXPENSE_STATUSES } from "@/lib/constants";
@@ -166,7 +166,14 @@ export default function EditExpensePage() {
   };
 
   if (loading) {
-    return <LoadingPage />;
+    return (
+      <div className="flex h-screen w-full">
+        <Sidebar />
+        <main className="flex-1 flex flex-col h-full overflow-hidden">
+          <LoadingContent />
+        </main>
+      </div>
+    );
   }
 
   return (

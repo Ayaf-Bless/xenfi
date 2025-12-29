@@ -197,7 +197,10 @@ export default function ExpensesPage() {
                       expenses.map((expense) => (
                         <tr
                           key={expense.id}
-                          className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                          className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                          onClick={() =>
+                            router.push(`/expenses/${expense.id}/view`)
+                          }
                         >
                           <td className="p-4 text-sm text-gray-900 dark:text-gray-300 font-medium whitespace-nowrap">
                             {new Date(expense.date).toLocaleDateString(
@@ -249,7 +252,10 @@ export default function ExpensesPage() {
                               }
                             )}
                           </td>
-                          <td className="p-4 text-right">
+                          <td
+                            className="p-4 text-right"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <div className="flex items-center gap-1 justify-end">
                               <Link href={`/expenses/${expense.id}/edit`}>
                                 <button className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">
